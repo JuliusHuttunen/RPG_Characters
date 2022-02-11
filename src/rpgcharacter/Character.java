@@ -52,7 +52,6 @@ abstract class Character {
         this.name = name;
         this.level = 1;
         this.damage = 1.0;
-        this.dps = 1.0;
         sayName(name);
     }
 
@@ -66,6 +65,8 @@ class Mage extends Character {
     public Mage(String name) {
         super(name);
         this.attributes = new PrimaryAttribute(1,1,8);
+        double modifier = attributes.intelligence * 0.01;
+        this.dps = damage * (damage + modifier);
     }
 
     public void dealDamage(){
@@ -79,6 +80,8 @@ class Mage extends Character {
         attributes.dexterity += 1;
         attributes.intelligence += 5;
         this.level++;
+        double modifier = attributes.intelligence * 0.01;
+        this.dps = this.damage * (this.damage + modifier);
         System.out.println(this.name + " has ascended to level " + this.level + ".");
     }
 
@@ -87,7 +90,8 @@ class Mage extends Character {
             case WAND, STAFF -> {
                 equipment.put(weapon.slot, weapon);
                 this.damage = weapon.getDamage();
-                this.dps = weapon.getDps() * (1 + (attributes.intelligence / 100));
+                double modifier = 1 + attributes.intelligence * 0.01;
+                this.dps = modifier * weapon.getDps();
                 System.out.println(this.name + " has equipped " + weapon.name + ".");
             }
             case AXE, BOW, DAGGER, HAMMER, SWORD -> Weapon.InvalidWeaponException();
@@ -100,6 +104,7 @@ class Mage extends Character {
         switch (armor.type) {
             case CLOTH -> {
                 putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                this.dps += armor.itemAttributes.intelligence * 0.01;
                 itemAttributeForSwap = armor.itemAttributes;
             }
             case MAIL, LEATHER, PLATE -> Armor.InvalidArmorException();
@@ -123,6 +128,8 @@ class Ranger extends Character {
     public Ranger(String name) {
         super(name);
         this.attributes = new PrimaryAttribute(1,7,1);
+        double modifier = attributes.dexterity * 0.01;
+        this.dps = damage * (damage + modifier);
     }
 
     public void dealDamage(){
@@ -136,6 +143,8 @@ class Ranger extends Character {
         attributes.dexterity += 5;
         attributes.intelligence += 1;
         this.level++;
+        double modifier = attributes.dexterity * 0.01;
+        this.dps = this.damage * (this.damage + modifier);
         System.out.println(this.name + " has ascended to level " + this.level + ".");
     }
 
@@ -144,7 +153,8 @@ class Ranger extends Character {
             case BOW -> {
                 equipment.put(weapon.slot, weapon);
                 this.damage = weapon.getDamage();
-                this.dps = weapon.getDps() * (1 + (attributes.dexterity / 100));
+                double modifier = 1 + attributes.dexterity * 0.01;
+                this.dps = modifier * weapon.getDps();
                 System.out.println(this.name + " has equipped " + weapon.name + ".");
             }
             case AXE, WAND, STAFF, DAGGER, HAMMER, SWORD -> Weapon.InvalidWeaponException();
@@ -157,6 +167,7 @@ class Ranger extends Character {
         switch (armor.type) {
             case LEATHER, MAIL -> {
                 putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                this.dps += armor.itemAttributes.dexterity * 0.01;
                 itemAttributeForSwap = armor.itemAttributes;
             }
             case CLOTH, PLATE -> Armor.InvalidArmorException();
@@ -179,6 +190,8 @@ class Rogue extends Character {
     public Rogue(String name) {
         super(name);
         this.attributes = new PrimaryAttribute(2,6,1);
+        double modifier = attributes.dexterity * 0.01;
+        this.dps = damage * (damage + modifier);
     }
 
     public void dealDamage(){
@@ -192,6 +205,8 @@ class Rogue extends Character {
         attributes.dexterity += 4;
         attributes.intelligence += 1;
         this.level++;
+        double modifier = attributes.dexterity * 0.01;
+        this.dps = this.damage * (this.damage + modifier);
         System.out.println(this.name + " has ascended to level " + this.level + ".");
     }
 
@@ -200,7 +215,8 @@ class Rogue extends Character {
             case DAGGER, SWORD ->{
                 equipment.put(weapon.slot, weapon);
                 this.damage = weapon.getDamage();
-                this.dps = weapon.getDps() * (1 + (attributes.dexterity / 100));
+                double modifier = 1 + attributes.dexterity * 0.01;
+                this.dps = modifier * weapon.getDps();
                 System.out.println(this.name + " has equipped " + weapon.name + ".");
             }
             case AXE, STAFF, HAMMER, BOW, WAND -> Weapon.InvalidWeaponException();
@@ -213,6 +229,7 @@ class Rogue extends Character {
         switch (armor.type) {
             case LEATHER, MAIL -> {
                 putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                this.dps += armor.itemAttributes.dexterity * 0.01;
                 itemAttributeForSwap = armor.itemAttributes;
             }
             case CLOTH, PLATE -> Armor.InvalidArmorException();
@@ -236,6 +253,8 @@ class Warrior extends Character {
     public Warrior(String name) {
         super(name);
         this.attributes = new PrimaryAttribute(5,2,1);
+        double modifier = attributes.strength * 0.01;
+        this.dps = damage * (damage + modifier);
     }
 
     public void dealDamage(){
@@ -249,6 +268,8 @@ class Warrior extends Character {
         attributes.dexterity += 2;
         attributes.intelligence += 1;
         this.level++;
+        double modifier = attributes.strength * 0.01;
+        this.dps = this.damage * (this.damage + modifier);
         System.out.println(this.name + " has ascended to level " + this.level + ".");
     }
 
@@ -257,7 +278,8 @@ class Warrior extends Character {
             case AXE, HAMMER, SWORD -> {
                 equipment.put(weapon.slot, weapon);
                 this.damage = weapon.getDamage();
-                this.dps = weapon.getDps() * (1 + (attributes.strength / 100));
+                double modifier = 1 + attributes.strength * 0.01;
+                this.dps = modifier * weapon.getDps();
                 System.out.println(this.name + " has equipped " + weapon.name + ".");
             }
             case WAND, BOW, DAGGER, STAFF -> Weapon.InvalidWeaponException();
@@ -270,6 +292,7 @@ class Warrior extends Character {
         switch (armor.type) {
             case MAIL, PLATE -> {
                 putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                this.dps += armor.itemAttributes.strength * 0.01;
                 itemAttributeForSwap = armor.itemAttributes;
             }
             case LEATHER, CLOTH -> Armor.InvalidArmorException();

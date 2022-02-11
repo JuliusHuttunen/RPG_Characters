@@ -11,6 +11,8 @@ public class Main {
 
        Warrior shura = new Warrior("Shura");
 
+       Mage mage = new Mage("Fucker");
+
        Rogue max = new Rogue("Max");
 
        characterStats(shura);
@@ -18,6 +20,8 @@ public class Main {
        shura.equipItem(sunBlade);
        shura.equipItem(chainMail);
        shura.dealDamage();
+
+       mage.equipItem(Items.wizardHat);
 
        characterStats(shura);
 
