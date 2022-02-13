@@ -32,16 +32,17 @@ class ItemsTest {
         testWeaponLvl2 = new Weapon("Uncommon axe", 2, Weapon.WeaponType.AXE, 7, 1.1);
         test = new Warrior("test");
 
-        System.out.println("Initializing test...");
-        console = System.out;
-        newConsole = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(newConsole));
+
 
     }
 
     @Test
     @DisplayName("Test weapon levelException")
     void testWeaponLevelException() {
+        System.out.println("Initializing test...");
+        console = System.out;
+        newConsole = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(newConsole));
         test.equipItem(testWeaponLvl2);
         System.setOut(console);
         assertEquals("test is not powerful enough to use this item!\r\n", newConsole.toString(), "Should throw a message into console.");
@@ -50,6 +51,10 @@ class ItemsTest {
     @Test
     @DisplayName("Test armor levelException")
     void testArmorLevelException() {
+        System.out.println("Initializing test...");
+        console = System.out;
+        newConsole = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(newConsole));
         test.equipItem(testPlateBodyLvl2);
         System.setOut(console);
         assertEquals("test is not powerful enough to use this item!\r\n", newConsole.toString(), "Should throw a message into console.");
@@ -58,6 +63,10 @@ class ItemsTest {
     @Test
     @DisplayName("Test invalid weapon type")
     void testInvalidWeaponException() {
+        System.out.println("Initializing test...");
+        console = System.out;
+        newConsole = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(newConsole));
         test.equipItem(testBow);
         System.setOut(console);
         assertEquals("I cannot use this weapon!\r\n", newConsole.toString(), "Should throw a message into console.");
@@ -66,6 +75,10 @@ class ItemsTest {
     @Test
     @DisplayName("Test invalid armor type")
     void testInvalidArmorException() {
+        System.out.println("Initializing test...");
+        console = System.out;
+        newConsole = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(newConsole));
         test.equipItem(testClothHead);
         System.setOut(console);
         assertEquals("I cannot wear this armor!\r\n", newConsole.toString(), "Should throw a message into console.");
@@ -103,8 +116,8 @@ class ItemsTest {
     @Test
     @DisplayName("Test DPS with equipment")
     void testDPSWithWeaponAndArmor() {
-        test.equipItem(testPlateBody);
         test.equipItem(testWeapon);
+        test.equipItem(testPlateBody);
         double sampleDPS = 7 * 1.1 * (1 + 6 * 0.01);
         assertEquals(test.dps, sampleDPS, "DPS should be the same.");
     }

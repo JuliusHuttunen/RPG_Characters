@@ -2,6 +2,8 @@ package rpgcharacter;
 
 public class Items {
 
+    //Create items here
+
     //Weapon: Sword
     static final Weapon sunBlade = new Weapon("Sunblade", 1, Weapon.WeaponType.SWORD, 10, 1.1);
     //Weapon: Staff

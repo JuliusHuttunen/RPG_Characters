@@ -2,9 +2,12 @@ package rpgcharacter;
 
 abstract class Item {
 
+    //Initialize common attributes
     public final String name;
     public final int reqLevel;
+    public Slot slot;
 
+    //Slot enumerator
     public enum Slot {
         HEAD,
         BODY,
@@ -12,32 +15,16 @@ abstract class Item {
         WEAPON
     }
 
-    public Slot slot;
-
+    //Constructor
     public Item(String name, int reqLevel, Slot slot){
         this.name = name;
         this.reqLevel = reqLevel;
         this.slot = slot;
     }
 
+    //If level is too low, print this to console
     public static void InvalidLevelException(Character character) {
         System.out.println(character.name + " is not powerful enough to use this item!");
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getReqLevel() {
-        return reqLevel;
-    }
-
-    public Slot getSlot() {
-        return slot;
-    }
-
-    public void setSlot(Slot slot) {
-        this.slot = slot;
     }
 
     @Override
@@ -52,11 +39,13 @@ abstract class Item {
 
 class Weapon extends Item {
 
+    //Initialize attributes
     public final int damage;
     private final double attSpeed;
     public final WeaponType type;
     public final double dps;
 
+    //Constructor, note that slot is hard assigned
     public Weapon(String name, int reqLevel, WeaponType type, int damage, double attSpeed) {
         super(name, reqLevel, Slot.WEAPON);
         this.type = type;
@@ -65,6 +54,7 @@ class Weapon extends Item {
         this.dps = attSpeed * damage;
     }
 
+    //Type enumerator
     enum WeaponType {
         AXE,
         BOW,
@@ -75,22 +65,15 @@ class Weapon extends Item {
         WAND
     }
 
+    //This is printed if not valid weapon
     public static void InvalidWeaponException() {
         System.out.println("I cannot use this weapon!");
     }
 
+    //These are used when calculating character dps and damage
     public int getDamage() {
         return damage;
     }
-
-    public double getAttSpeed() {
-        return attSpeed;
-    }
-
-    public WeaponType getType() {
-        return type;
-    }
-
     public double getDps() {
         return dps;
     }
@@ -111,14 +94,18 @@ class Weapon extends Item {
 
 class Armor extends Item {
 
-   public final ArmorType type;
+    //Initialize attributes
+    public final ArmorType type;
+    PrimaryAttribute itemAttributes;
 
+    //Constructor
     public Armor(String name, int reqLevel, Slot slot, ArmorType type, PrimaryAttribute itemAttributes) {
         super(name, reqLevel, slot);
         this.type = type;
         this.itemAttributes = itemAttributes;
     }
 
+    //Armor type enumerator
     enum ArmorType {
         CLOTH,
         LEATHER,
@@ -126,22 +113,9 @@ class Armor extends Item {
         PLATE
     }
 
-    PrimaryAttribute itemAttributes;
-
+    //If not valid armor, print this
     public static void InvalidArmorException() {
         System.out.println("I cannot wear this armor!");
-    }
-
-    public ArmorType getType() {
-        return type;
-    }
-
-    public PrimaryAttribute getItemAttributes() {
-        return itemAttributes;
-    }
-
-    public void setItemAttributes(PrimaryAttribute itemAttributes) {
-        this.itemAttributes = itemAttributes;
     }
 
     @Override
