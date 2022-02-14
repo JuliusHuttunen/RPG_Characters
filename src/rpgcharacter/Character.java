@@ -22,7 +22,7 @@ abstract class Character {
 
     //Character says their name
     public void sayName(String name) {
-        System.out.println(name + ": I am " + this.name + ".");
+        System.out.println(this.name + ": I am " + this.name + ".");
     }
 
     //Deal damage in one sec
@@ -65,7 +65,6 @@ abstract class Character {
         this.name = name;
         this.level = 1;
         this.damage = 1;
-        this.attributes = new PrimaryAttribute(0,0,0);
         sayName(name);
     }
 

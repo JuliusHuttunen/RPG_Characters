@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class WarriorTest {
 
     Warrior test;
-    Weapon orcAxe;
 
     @BeforeEach
     void setUp() {
