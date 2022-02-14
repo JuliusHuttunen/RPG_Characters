@@ -7,7 +7,9 @@ public class Main {
 
     public static void main(String[] args) throws NoSuchFieldException {
 
-        PrintStream printer = System.out;
+        //-----------------COMMAND LINE 'GAME'--------------------//
+
+        /* PrintStream printer = System.out;
         Scanner input = new Scanner(System.in);
         boolean stop = false;
         Character currentHero = null;
@@ -38,9 +40,6 @@ public class Main {
         if(chosenClass == 4){
             Warrior warrior = new Warrior(chosenName);
             currentHero = warrior;
-        }
-        else {
-            printer.println("That is not a valid class!");
         }
 
         characterStats(currentHero);
@@ -77,7 +76,11 @@ public class Main {
             }
         }
 
-        /*//Create character
+        */
+
+        //------------------DEMONSTRATION---------------//
+
+        //Create character
         Warrior conan = new Warrior("Conan");
         characterStats(conan);
 
@@ -91,20 +94,20 @@ public class Main {
         characterStats(conan);
 
         //Equip armor
-        conan.equipItem(Items.steelArmor);
+        conan.equipItem(Items.getItem("Steel Armor"));
         characterStats(conan);
 
         //Equip weapon
-        conan.equipItem(Items.orcAxe);
+        conan.equipItem(Items.getItem("Orcish Axe"));
         characterStats(conan);
 
         //Equip lesser armor
-        conan.equipItem(Items.chainMail);
+        conan.equipItem(Items.getItem("Chainmail"));
         characterStats(conan);
 
         //Level up
         conan.levelUp();
-        characterStats(conan);*/
+        characterStats(conan);
 
     }
 
