@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws NoSuchFieldException {
+    public static void main(String[] args) throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
 
         //-----------------COMMAND LINE 'GAME'--------------------//
 

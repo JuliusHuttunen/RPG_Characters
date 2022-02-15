@@ -17,8 +17,8 @@ abstract class Character {
     public abstract void levelUp();
 
     //EquipItem cases
-    abstract void equipWeapon(Weapon item);
-    abstract void equipArmor(Armor item);
+    abstract void equipWeapon(Weapon item) throws InvalidWeaponException;
+    abstract void equipArmor(Armor item) throws InvalidArmorException;
 
     //Character says their name
     public void sayName(String name) {
@@ -49,14 +49,18 @@ abstract class Character {
     }
 
     //Equipping items common method
-    public void equipItem(Item item){
-        if(item.reqLevel > level){
-            Item.InvalidLevelException(this);
-            return;
+    public void equipItem(Item item) throws InvalidWeaponException, InvalidArmorException, InvalidLevelException {
+        try {
+            if (item.reqLevel > level) {
+                throw new InvalidLevelException("Character level is not high enough.");
+            }
+            switch (item.slot) {
+                case WEAPON -> equipWeapon((Weapon) item);
+                case BODY, LEGS, HEAD -> equipArmor((Armor) item);
+            }
         }
-        switch(item.slot) {
-            case WEAPON -> equipWeapon((Weapon) item);
-            case BODY, LEGS, HEAD -> equipArmor((Armor) item);
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -98,17 +102,22 @@ class Mage extends Character {
     }
 
     //Can only equip staff or wand
-    void equipWeapon(Weapon weapon) {
-        switch (weapon.type) {
-            case WAND, STAFF -> {
-                equipment.put(weapon.slot, weapon);
-                //Update damage and dps
-                this.damage = weapon.getDamage();
-                double modifier = 1 + this.attributes.intelligence * 0.01;
-                this.dps = weapon.getDps() * modifier;
-                System.out.println(this.name + " has equipped " + weapon.name + ".");
+    void equipWeapon(Weapon weapon) throws InvalidWeaponException {
+        try {
+            switch (weapon.type) {
+                case WAND, STAFF -> {
+                    equipment.put(weapon.slot, weapon);
+                    //Update damage and dps
+                    this.damage = weapon.getDamage();
+                    double modifier = 1 + this.attributes.intelligence * 0.01;
+                    this.dps = weapon.getDps() * modifier;
+                    System.out.println(this.name + " has equipped " + weapon.name + ".");
+                }
+                case AXE, BOW, DAGGER, HAMMER, SWORD -> throw new InvalidWeaponException("I can't equip this weapon!");
             }
-            case AXE, BOW, DAGGER, HAMMER, SWORD -> Weapon.InvalidWeaponException();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -116,21 +125,25 @@ class Mage extends Character {
     PrimaryAttribute itemAttributeForSwap;
 
     //Can only equip cloth
-    void equipArmor(Armor armor) {
-        switch (armor.type) {
-            case CLOTH -> {
-                putOnArmor(this.attributes, itemAttributeForSwap, armor);
-                double modifier = 1 + this.attributes.intelligence * 0.01;
-                Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
-                if(equippedWeapon == null){
-                    this.dps = damage * modifier;
+    void equipArmor(Armor armor) throws InvalidArmorException {
+        try {
+            switch (armor.type) {
+                case CLOTH -> {
+                    putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                    double modifier = 1 + this.attributes.intelligence * 0.01;
+                    Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
+                    if (equippedWeapon == null) {
+                        this.dps = damage * modifier;
+                    } else {
+                        this.dps = equippedWeapon.getDps() * modifier;
+                    }
+                    itemAttributeForSwap = armor.itemAttributes;
                 }
-                else {
-                    this.dps = equippedWeapon.getDps() * modifier;
-                }
-                itemAttributeForSwap = armor.itemAttributes;
+                case MAIL, LEATHER, PLATE -> throw new InvalidArmorException("I can't use this armor!");
             }
-            case MAIL, LEATHER, PLATE -> Armor.InvalidArmorException();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
@@ -162,37 +175,46 @@ class Ranger extends Character {
     }
 
     //Can only equip bow
-    void equipWeapon(Weapon weapon) {
-        switch (weapon.type) {
-            case BOW -> {
-                equipment.put(weapon.slot, weapon);
-                this.damage = weapon.getDamage();
-                double modifier = 1 + this.attributes.dexterity * 0.01;
-                this.dps = weapon.getDps() * modifier;
-                System.out.println(this.name + " has equipped " + weapon.name + ".");
+    void equipWeapon(Weapon weapon) throws InvalidWeaponException {
+        try {
+            switch (weapon.type) {
+                case BOW -> {
+                    equipment.put(weapon.slot, weapon);
+                    this.damage = weapon.getDamage();
+                    double modifier = 1 + this.attributes.dexterity * 0.01;
+                    this.dps = weapon.getDps() * modifier;
+                    System.out.println(this.name + " has equipped " + weapon.name + ".");
+                }
+                case AXE, WAND, STAFF, DAGGER, HAMMER, SWORD -> throw new InvalidWeaponException("I can't equip this weapon!");
             }
-            case AXE, WAND, STAFF, DAGGER, HAMMER, SWORD -> Weapon.InvalidWeaponException();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
     PrimaryAttribute itemAttributeForSwap;
 
     //Can only equip leather and mail
-    void equipArmor(Armor armor) {
-        switch (armor.type) {
-            case LEATHER, MAIL -> {
-                Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
-                double modifier = 1 + this.attributes.dexterity * 0.01;
-                putOnArmor(this.attributes, itemAttributeForSwap, armor);
-                if(equippedWeapon == null){
-                    this.dps = damage * modifier;
+    void equipArmor(Armor armor) throws InvalidArmorException {
+        try {
+            switch (armor.type) {
+                case LEATHER, MAIL -> {
+                    Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
+                    double modifier = 1 + this.attributes.dexterity * 0.01;
+                    putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                    if (equippedWeapon == null) {
+                        this.dps = damage * modifier;
+                    } else {
+                        this.dps = equippedWeapon.getDps() * modifier;
+                    }
+                    itemAttributeForSwap = armor.itemAttributes;
                 }
-                else {
-                    this.dps = equippedWeapon.getDps() * modifier;
-                }
-                itemAttributeForSwap = armor.itemAttributes;
+                case CLOTH, PLATE -> throw new InvalidArmorException("I can't use this armor!");
             }
-            case CLOTH, PLATE -> Armor.InvalidArmorException();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
@@ -201,59 +223,66 @@ class Rogue extends Character {
 
     public Rogue(String name) {
         super(name);
-        this.attributes = new PrimaryAttribute(2,6,1);
+        this.attributes = new PrimaryAttribute(2, 6, 1);
         this.dps = damage * 1.06;
         this.characterClass = "Rogue";
     }
 
-    public void levelUp(){
+    public void levelUp() {
         attributes.strength += 1;
         attributes.dexterity += 4;
         attributes.intelligence += 1;
         this.level++;
         double modifier = 1 + this.attributes.dexterity * 0.01;
         Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
-        if(equippedWeapon == null){
+        if (equippedWeapon == null) {
             this.dps = damage * modifier;
-        }
-        else {
+        } else {
             this.dps = equippedWeapon.getDps() * modifier;
         }
         System.out.println(this.name + " has ascended to level " + this.level + ".");
     }
 
     //Can only equip dagger or sword
-    void equipWeapon(Weapon weapon) {
-        switch (weapon.type) {
-            case DAGGER, SWORD ->{
-                equipment.put(weapon.slot, weapon);
-                this.damage = weapon.getDamage();
-                double modifier = 1 + this.attributes.dexterity * 0.01;
-                this.dps = weapon.getDps() * modifier;
-                System.out.println(this.name + " has equipped " + weapon.name + ".");
+    void equipWeapon(Weapon weapon) throws InvalidWeaponException {
+        try {
+            switch (weapon.type) {
+                case DAGGER, SWORD -> {
+                    equipment.put(weapon.slot, weapon);
+                    this.damage = weapon.getDamage();
+                    double modifier = 1 + this.attributes.dexterity * 0.01;
+                    this.dps = weapon.getDps() * modifier;
+                    System.out.println(this.name + " has equipped " + weapon.name + ".");
+                }
+                case AXE, STAFF, HAMMER, BOW, WAND -> throw new InvalidWeaponException("I can't equip this weapon!");
             }
-            case AXE, STAFF, HAMMER, BOW, WAND -> Weapon.InvalidWeaponException();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
     PrimaryAttribute itemAttributeForSwap;
 
     //Can only equip leather or mail
-    void equipArmor(Armor armor) {
-        switch (armor.type) {
-            case LEATHER, MAIL -> {
-                putOnArmor(this.attributes, itemAttributeForSwap, armor);
-                double modifier = 1 + this.attributes.dexterity * 0.01;
-                Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
-                if(equippedWeapon == null){
-                    this.dps = damage * modifier;
+    void equipArmor(Armor armor) throws InvalidArmorException {
+        try {
+            switch (armor.type) {
+                case LEATHER, MAIL -> {
+                    putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                    double modifier = 1 + this.attributes.dexterity * 0.01;
+                    Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
+                    if (equippedWeapon == null) {
+                        this.dps = damage * modifier;
+                    } else {
+                        this.dps = equippedWeapon.getDps() * modifier;
+                    }
+                    itemAttributeForSwap = armor.itemAttributes;
                 }
-                else {
-                    this.dps = equippedWeapon.getDps() * modifier;
-                }
-                itemAttributeForSwap = armor.itemAttributes;
+                case CLOTH, PLATE -> throw new InvalidArmorException("I can't use this armor!");
             }
-            case CLOTH, PLATE -> Armor.InvalidArmorException();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
@@ -284,37 +313,46 @@ class Warrior extends Character {
     }
 
     //Can only equip axe, hammer or sword
-    void equipWeapon(Weapon weapon) {
-        switch (weapon.type) {
-            case AXE, HAMMER, SWORD -> {
-                equipment.put(weapon.slot, weapon);
-                this.damage = weapon.getDamage();
-                double modifier = 1 + this.attributes.strength * 0.01;
-                this.dps = weapon.getDps() * modifier;
-                System.out.println(this.name + " has equipped " + weapon.name + ".");
+    void equipWeapon(Weapon weapon) throws InvalidWeaponException {
+        try {
+            switch (weapon.type) {
+                case AXE, HAMMER, SWORD -> {
+                    equipment.put(weapon.slot, weapon);
+                    this.damage = weapon.getDamage();
+                    double modifier = 1 + this.attributes.strength * 0.01;
+                    this.dps = weapon.getDps() * modifier;
+                    System.out.println(this.name + " has equipped " + weapon.name + ".");
+                }
+                case WAND, BOW, DAGGER, STAFF -> throw new InvalidWeaponException("I can't equip this weapon!");
             }
-            case WAND, BOW, DAGGER, STAFF -> Weapon.InvalidWeaponException();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
     PrimaryAttribute itemAttributeForSwap;
 
     //Can only equip mail or plate
-    void equipArmor(Armor armor) {
-        switch (armor.type) {
-            case MAIL, PLATE -> {
-                putOnArmor(this.attributes, itemAttributeForSwap, armor);
-                double modifier = 1 + this.attributes.strength * 0.01;
-                Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
-                if(equippedWeapon == null){
-                    this.dps = damage * modifier;
+    void equipArmor(Armor armor) throws InvalidArmorException {
+        try {
+            switch (armor.type) {
+                case MAIL, PLATE -> {
+                    putOnArmor(this.attributes, itemAttributeForSwap, armor);
+                    double modifier = 1 + this.attributes.strength * 0.01;
+                    Weapon equippedWeapon = (Weapon) equipment.get(Item.Slot.WEAPON);
+                    if (equippedWeapon == null) {
+                        this.dps = damage * modifier;
+                    } else {
+                        this.dps = equippedWeapon.getDps() * modifier;
+                    }
+                    itemAttributeForSwap = armor.itemAttributes;
                 }
-                else {
-                    this.dps = equippedWeapon.getDps() * modifier;
-                }
-                itemAttributeForSwap = armor.itemAttributes;
+                case LEATHER, CLOTH -> throw new InvalidArmorException("I can't use this armor!");
             }
-            case LEATHER, CLOTH -> Armor.InvalidArmorException();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

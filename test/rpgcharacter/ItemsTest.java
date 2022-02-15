@@ -3,10 +3,6 @@ package rpgcharacter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static java.util.Objects.isNull;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,9 +14,6 @@ class ItemsTest {
     Armor testClothHead;
     Weapon testWeaponLvl2;
     Warrior test;
-
-    PrintStream console;
-    ByteArrayOutputStream newConsole;
 
     @BeforeEach
     void setUp(){
@@ -38,62 +31,38 @@ class ItemsTest {
 
     @Test
     @DisplayName("Test weapon levelException")
-    void testWeaponLevelException() {
-        System.out.println("Initializing test...");
-        console = System.out;
-        newConsole = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(newConsole));
+    void testWeaponLevelException() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testWeaponLvl2);
-        System.setOut(console);
-        assertEquals("test is not powerful enough to use this item!\r\n", newConsole.toString(), "Should throw a message into console.");
     }
 
     @Test
     @DisplayName("Test armor levelException")
-    void testArmorLevelException() {
-        System.out.println("Initializing test...");
-        console = System.out;
-        newConsole = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(newConsole));
+    void testArmorLevelException() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testPlateBodyLvl2);
-        System.setOut(console);
-        assertEquals("test is not powerful enough to use this item!\r\n", newConsole.toString(), "Should throw a message into console.");
     }
 
     @Test
     @DisplayName("Test invalid weapon type")
-    void testInvalidWeaponException() {
-        System.out.println("Initializing test...");
-        console = System.out;
-        newConsole = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(newConsole));
+    void testInvalidWeaponException() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testBow);
-        System.setOut(console);
-        assertEquals("I cannot use this weapon!\r\n", newConsole.toString(), "Should throw a message into console.");
     }
 
     @Test
     @DisplayName("Test invalid armor type")
-    void testInvalidArmorException() {
-        System.out.println("Initializing test...");
-        console = System.out;
-        newConsole = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(newConsole));
+    void testInvalidArmorException() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testClothHead);
-        System.setOut(console);
-        assertEquals("I cannot wear this armor!\r\n", newConsole.toString(), "Should throw a message into console.");
     }
 
     @Test
     @DisplayName("Test valid weapon type")
-    void testValidWeapon() {
+    void testValidWeapon() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testWeapon);
         assertEquals(true, !isNull(test.equipment.get(Item.Slot.WEAPON)));
     }
 
     @Test
     @DisplayName("Test valid armor type")
-    void testValidArmor() {
+    void testValidArmor() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testPlateBody);
         assertEquals(true, !isNull(test.equipment.get(testPlateBody.slot)));
     }
@@ -107,7 +76,7 @@ class ItemsTest {
 
     @Test
     @DisplayName("Test DPS with weapon")
-    void testDPSWithWeapon() {
+    void testDPSWithWeapon() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testWeapon);
         double sampleDPS = 7 * 1.1 * (1 + 5 * 0.01);
         assertEquals(test.dps, sampleDPS, "DPS should be the same.");
@@ -115,7 +84,7 @@ class ItemsTest {
 
     @Test
     @DisplayName("Test DPS with equipment")
-    void testDPSWithWeaponAndArmor() {
+    void testDPSWithWeaponAndArmor() throws InvalidArmorException, InvalidWeaponException, InvalidLevelException {
         test.equipItem(testWeapon);
         test.equipItem(testPlateBody);
         double sampleDPS = 7 * 1.1 * (1 + 6 * 0.01);

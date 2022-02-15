@@ -22,11 +22,6 @@ abstract class Item {
         this.slot = slot;
     }
 
-    //If level is too low, print this to console
-    public static void InvalidLevelException(Character character) {
-        System.out.println(character.name + " is not powerful enough to use this item!");
-    }
-
     @Override
     public String toString() {
         return "Item{" +
@@ -63,11 +58,6 @@ class Weapon extends Item {
         STAFF,
         SWORD,
         WAND
-    }
-
-    //This is printed if not valid weapon
-    public static void InvalidWeaponException() {
-        System.out.println("I cannot use this weapon!");
     }
 
     //These are used when calculating character dps and damage
@@ -113,13 +103,10 @@ class Armor extends Item {
         PLATE
     }
 
-    //If not valid armor, print this
-    public static void InvalidArmorException() {
-        System.out.println("I cannot wear this armor!");
-    }
-
     @Override
     public String toString() {
         return name;
     }
 }
+
+
